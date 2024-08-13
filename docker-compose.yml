@@ -1,0 +1,38 @@
+version: "3.8"
+
+services:
+  db:
+    build:
+      context: ./db
+    container_name: challenge3-db
+    env_file:
+      - .env
+    ports:
+      - "3306:3306"
+    networks:
+      - challenge3-network
+
+  node-service:
+    build:
+      context: ./api
+    env_file:
+      - .env
+    depends_on:
+      - db
+    networks:
+      - challenge3-network
+
+  nginx:
+    build:
+      context: ./nginx
+    container_name: challenge3-nginx
+    ports:
+      - "8080:80"
+    depends_on:
+      - node-service
+    networks:
+      - challenge3-network
+
+networks:
+  challenge3-network:
+    driver: bridge
